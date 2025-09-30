@@ -1,0 +1,246 @@
+1)
+respuesta:
+a)
+b)
+d)
+
+2)
+false true
+
+3) 
+Verdadero/Falso (explica por qué)
+a) El prefijo _ impide el acceso desde fuera de la clase.
+ exp: Falso ya que el primer "_" hace que el acceso del atributo es indicado como protegido, es decir que ese acceso se sugiere solo se use dentro de la clase, sin embargo se puede seguir usando fuera de esta
+b) El prefijo __ hace imposible acceder al atributo.
+ exp: Falso ya que los dos primeros "__" hace que el acceso del atributo sea de uso privado, sin embargo se puede seguir usando el mangling  para acceder a estos atributos
+c) El name mangling depende del nombre de la clase.
+ exp: Verdad, ya que este depende de si la variable es de uso privado es decir que tengo los dos primeros "__"
+
+4)
+se imprime:
+
+abc
+
+no hay error de acceso debido a que el solo "_" hace que el acceso sea protegido, pero, aun asi no tiene ninguna restriccion de uso
+
+5)
+la salida es
+
+2 1
+
+6)
+el codigo suelta un error esto porque el atributo "y" no esta definido en __slots__
+
+7)
+Completa para que b tenga un atributo “protegido por convención”.
+class B:
+def __init__(self):
+	self._valor = 99
+
+8)
+true false true
+
+esto debido a que hasattr es una funcion que devuelve un valor booleano si el atributo que se menciona existe  y cuando se menciona m, '_step' se esta llamando al atributo protegido por convencion _step por lo que devuelve un valor true, luego se menciona m, '__tick' que es un atributo que no existe debido que se esta usando fuera de la clase y necesita el mangling asi que devuelve  un valor false, por ultimo se menciona m, '_M__tick' que es el atributo privado de la clase M el cual se ha llamado con el mangling por lo que devuelve un valor true
+
+9)
+class S:
+def __init__(self):
+	self.__data = [1, 2]
+def size(self):
+	return len(self.__data)
+
+s = S()
+
+# Accede a __data (solo para comprobar), sin modificar el código de la
+clase:
+# Escribe una línea que obtenga la lista usando name mangling y la
+imprima.
+	print (s._S__data)
+
+10)
+el que apareceria seria _D__a debido a que es el unico posible de esta forma debido a que es necesario el mangling para que este exista, entonces __a no es posible y a no existe
+
+11) 
+class Cuenta:
+def __init__(self, saldo):
+	self._saldo = 0
+	self.saldo = saldo
+	@property
+def saldo(self):
+	return self._saldo
+@saldo.setter
+def saldo(self, value):
+	# Validar no-negativo
+	if value < 0:
+	raise ValueError("Saldo no puede ser negativo")
+	self._saldo = value
+
+12) 
+Escribe la propiedad.
+Convierte temperatura_f en un atributo de solo lectura que se calcula desde
+temperatura_c.
+
+class Termometro:
+	def __init__(self, temperatura_c):
+	self._c = float(temperatura_c)
+
+# Define aquí la propiedad temperatura_f: F = C * 9/5 + 32
+@property
+def temperatura_f (self):
+	return self._c * 9/5 + 32
+
+13)
+Invariante con tipo
+Haz que nombre sea siempre str. Si asignan algo que no sea str, lanza TypeError.
+
+class Usuario:
+	def __init__(self, nombre):
+		self.nombre = nombre
+
+# Implementa property para nombre
+@property
+def nombre (self):
+	return self._nombre
+
+@nombre.setter
+	if not isinstance(value, str):
+		raise TypeError("El nombre debe de ser de tipo str")
+	rself._nombre = value
+
+14) 
+Encapsulación de colección
+Expón una vista de solo lectura de una lista interna.
+class Registro:
+	def __init__(self):
+		self.__items = []
+	
+	def add(self, x):
+		self.__items.append(x)
+
+# Crea una propiedad 'items' que retorne una tupla inmutable con
+el contenido
+	@property
+	def items(self):
+		return tuple(self.__items)
+
+15)
+Refactor a encapsulación
+Refactoriza para evitar acceso directo al atributo y validar que velocidad sea entre 0 y 200.
+
+class Motor:
+	def __init__(self, velocidad):
+		self.velocidad = velocidad # refactor aquí
+
+	@property
+	def velocidad(self):
+		return self._velocidad
+
+	@velocidad.setter
+		if not isinstance(value, (int, float)):
+			raise TypeError ("la velocidad debe ser de tipo numerico")
+		if not ( 0 <= value <= 200):
+			raise ValueError ("la velocidad debe estar en un rango de entre 0 a 200")
+		self._velocidad = value
+
+16)
+Elección de convención
+Explica con tus palabras cuándo usarías _atributo frente a __atributo en una API pública de una librería.
+
+rta: usaria _atributo cuando quiera indicar que el uso del atributo sea sugerido dentro de la clase, mas que todo paradar un orden y mas en casos como el del uso dentro de @property.
+      en cambio el uso de __atributo es para restringir el uso del aributo dentro de la clase de la API publica y en el momento de usarla en otra clase no genere conflictos debido a la transformacion del mangling.
+
+17)
+Detección de fuga de encapsulación
+¿Qué problema hay aquí?
+	rta: al momento de devolver la informacion de la lista se accede al valor directo, por lo tanto es modificable.
+class Buffer:
+	def __init__(self, data):
+		self._data = list(data)
+	def get_data(self):
+		return self._data
+
+Propón una corrección.
+	def __init__(self, data):
+		self._data = list(data)
+	def get_data(self):
+		return tuple(self._data)
+	#de esta forma se devuelve una copia inmutable del valor directo
+
+18)
+Diseño con herencia y mangling
+¿Dónde fallará esto y cómo lo arreglas?
+class A:
+	def __init__(self):
+		self.__x = 1
+
+class B(A):
+	def get(self):
+		return self.__x
+
+esto fallaria en la definicion del metodo get ya que se menciona a self.__x el cual devolveria un error porque no llama a una funcion existente debido a que el __ hace que sea necesario el uso del mangling.
+
+se podria solucionar de dos formas una haciendo uso de otra convencion en las variable como podria ser la de un solo guion bajo, o tambien podria llamarse al atributo desde el uso del mangling.
+
+en este caso usare el mangling:
+
+class A:
+	def __init__(self):
+		self.__x = 1
+
+class B(A):
+	def get(self):
+		return self._A__x
+
+19)
+Completa para exponer solo un método seguro de un objeto interno.
+class _Repositorio:
+	def __init__(self):
+		self._datos = {}
+	def guardar(self, k, v):
+		self._datos[k] = v
+	def _dump(self):
+		return dict(self._datos)
+
+class Servicio:
+	def __init__(self):
+		self.__repo = _Repositorio()
+# Expón un método 'guardar' que delegue en el repositorio,
+# pero NO expongas _dump ni __repo.
+	def guardar(self, k, v )
+		self.__repo.guardar(k,v)
+
+20)
+Mini-kata
+Escribe una clase ContadorSeguro con:
+• atributo “protegido” _n
+• método inc() que suma 1
+• propiedad n de solo lectura
+• método “privado” __log() que imprima "tick" cuando se incrementa
+Muestra un uso básico con dos incrementos y la lectura final.
+
+class ContadorSeguro
+	def __init__(self):
+		self._n = 0
+	def inc(self):
+		self._n += 1
+		self.__log()
+		return self._n
+
+	@property
+	def n(self):
+		return self._n
+
+	def __log(self): 
+		print ("tick")
+
+el caso de uso podria ser
+
+c = ContadorSeguro()
+c.inc()
+c.inc()
+print (c.n)
+
+la salida resultante es 
+tick
+tick
+2
